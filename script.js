@@ -60,7 +60,11 @@ function setTickerError(id) {
     el.className = 'ticker-change ticker-change--neutral';
 }
 
-// ── Korean Market (Naver Finance Polling API) ────────────────────────────────
+// ── CORS Proxy (browser→외부 API 차단 우회) ──────────────────────────────────
+const proxyFetch = (url) =>
+    fetch('https://corsproxy.io/?url=' + encodeURIComponent(url));
+
+// ── Korean Market (corsproxy → Naver Finance Polling API) ────────────────────
 async function fetchKoreanMarket() {
     const targets = {
         'kospi':         'https://polling.finance.naver.com/api/realtime?query=SERVICE_INDEX:KOSPI',
@@ -72,7 +76,7 @@ async function fetchKoreanMarket() {
     await Promise.allSettled(
         Object.entries(targets).map(async ([id, url]) => {
             try {
-                const res  = await fetch(url);
+                const res  = await proxyFetch(url);
                 const data = await res.json();
                 const item = data.result.areas[0].data[0];
                 // nm = formatted current value, cv = change amount, cvp = change percent
@@ -84,10 +88,10 @@ async function fetchKoreanMarket() {
     );
 }
 
-// ── NVDA via Naver Finance ───────────────────────────────────────────────────
+// ── NVDA (corsproxy → Naver Finance) ─────────────────────────────────────────
 async function fetchNVDA() {
     try {
-        const res  = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:NAS:NVDA');
+        const res  = await proxyFetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:NAS:NVDA');
         const data = await res.json();
         const item = data.result.areas[0].data[0];
         updateTicker('nvda', item.nm, Number(item.cv), item.cvp + '%');
@@ -96,7 +100,7 @@ async function fetchNVDA() {
     }
 }
 
-// ── US Indices (Yahoo Finance) ───────────────────────────────────────────────
+// ── US Indices (corsproxy → Yahoo Finance) ───────────────────────────────────
 async function fetchUSIndices() {
     const symbols = {
         'sp500':  '%5EGSPC',
@@ -107,7 +111,7 @@ async function fetchUSIndices() {
     await Promise.allSettled(
         Object.entries(symbols).map(async ([id, sym]) => {
             try {
-                const res  = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}?range=1d&interval=1d`);
+                const res  = await proxyFetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}?range=1d&interval=1d`);
                 const data = await res.json();
                 const meta = data.chart.result[0].meta;
                 const price    = meta.regularMarketPrice;
@@ -140,30 +144,27 @@ async function fetchBTC() {
     }
 }
 
-// ── Gold & Silver (metals.live public API) ───────────────────────────────────
+// ── Gold & Silver (goldprice.org – CORS 허용, 등락률 포함) ───────────────────
 async function fetchMetals() {
     try {
-        const res  = await fetch('https://api.metals.live/v1/spot');
+        const res  = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
         const data = await res.json();
+        const item = data.items[0];
 
-        // metals.live can return either an array [{gold:...},{silver:...}] or a plain object
-        let goldPrice, silverPrice;
-        if (Array.isArray(data)) {
-            goldPrice   = data.find(item => 'gold'   in item)?.gold;
-            silverPrice = data.find(item => 'silver' in item)?.silver;
-        } else {
-            goldPrice   = data.gold;
-            silverPrice = data.silver;
-        }
-
-        if (goldPrice != null) {
-            updateTicker('gold',   '$' + goldPrice.toLocaleString('en-US', { maximumFractionDigits: 2 }), 0, '현물가');
+        if (item.xauPrice != null) {
+            updateTicker('gold',
+                '$' + item.xauPrice.toLocaleString('en-US', { maximumFractionDigits: 2 }),
+                item.chgXau,
+                item.pcXau.toFixed(2) + '%');
         } else {
             setTickerError('gold');
         }
 
-        if (silverPrice != null) {
-            updateTicker('silver', '$' + silverPrice.toLocaleString('en-US', { maximumFractionDigits: 2 }), 0, '현물가');
+        if (item.xagPrice != null) {
+            updateTicker('silver',
+                '$' + item.xagPrice.toLocaleString('en-US', { maximumFractionDigits: 2 }),
+                item.chgXag,
+                item.pcXag.toFixed(2) + '%');
         } else {
             setTickerError('silver');
         }
