@@ -1,22 +1,22 @@
-// ── Newsletter Data ──────────────────────────────────────────────────────────
+// ── Newsletter Data (매주 수요일 GitHub Actions로 자동 업데이트) ──────────────
 const newsletters = [
     {
-        title: '[런던] 2025년, 유럽 미술관에서 누굴 만날까 🎊',
-        date: '2025. 1. 1.',
-        thumbnail: 'https://img2.stibee.com/115188_2590822_1735663531116824430.jpg',
-        link: 'https://museumexpress.stibee.com/p/19/'
+        title: '[런던] 서른 둘에 세상을 떠난 천재 화가의 회고전 😿',
+        date: '2025. 2. 25.',
+        thumbnail: 'https://img2.stibee.com/115188_2661167_1740057366624657831.png',
+        link: 'https://museumexpress.stibee.com/p/27/'
     },
     {
-        title: '[런던] 프랜시스 베이컨의 일그러진 초상화 😠',
-        date: '2024. 12. 24.',
-        thumbnail: 'https://img2.stibee.com/115188_2578718_1734967051050782575.jpg',
-        link: 'https://museumexpress.stibee.com/p/18/'
+        title: '[런던] 피카소 초상화에 숨은 미지의 여인은 누굴까 👩‍🦰',
+        date: '2025. 2. 18.',
+        thumbnail: 'https://img2.stibee.com/115188_2653974_1739896760210215074.jpg',
+        link: 'https://museumexpress.stibee.com/p/26/'
     },
     {
-        title: '[런던] 왕궁에서 만난 다빈치의 드로잉 ✍️',
-        date: '2024. 12. 17.',
-        thumbnail: 'https://img2.stibee.com/115188_2568599_1734447006690231902.jpg',
-        link: 'https://museumexpress.stibee.com/p/17/'
+        title: '[마드리드] 풍경화, 인물화로 가득한 취향의 미술관 🏞️',
+        date: '2025. 2. 11.',
+        thumbnail: 'https://img.stibee.com/115188_2646085_1739203861694706889.jpg',
+        link: 'https://museumexpress.stibee.com/p/25/'
     }
 ];
 
