@@ -19,13 +19,6 @@ const newsletters = [
     }
 ];
 
-// 아트테크 주가 데이터 (시뮬레이션 - 실제 API 연동 가능)
-const stockData = {
-    seoulAuction: { price: "12,450", change: "+4.2%", status: "up" },
-    kAuction: { price: "5,120", change: "-1.5%", status: "down" },
-    kospi: { price: "6,012.45", change: "+2.1%", status: "up" }
-};
-
 // 오늘의 명화 리스트
 const dailyArts = [
     {
@@ -40,21 +33,60 @@ const dailyArts = [
     }
 ];
 
-function updateMarketData() {
-    document.querySelector('#card-seoul-auction .value').innerText = stockData.seoulAuction.price;
-    document.querySelector('#card-seoul-auction .change').innerText = `▲ ${stockData.seoulAuction.change}`;
-    document.querySelector('#card-seoul-auction .change').className = `change ${stockData.seoulAuction.status}`;
+// 실시간 주식 데이터 업데이트 함수
+async function fetchStockData() {
+    try {
+        // 네이버증권 KOSPI 실시간 데이터 (공개 API)
+        const kospiResponse = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_INDEX:KOSPI');
+        const kospiData = await kospiResponse.json();
+        const kospi = kospiData.result.areas[0].data[0];
+        updateTicker('kospi', kospi.nm, kospi.cv, kospi.cvp);
 
-    document.querySelector('#card-k-auction .value').innerText = stockData.kAuction.price;
-    document.querySelector('#card-k-auction .change').innerText = `▼ ${stockData.kAuction.change}`;
-    document.querySelector('#card-k-auction .change').className = `change ${stockData.kAuction.status}`;
+        // 서울옥션 (063170) 데이터
+        const seoulAuctionResponse = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:063170');
+        const seoulData = await seoulAuctionResponse.json();
+        const seoul = seoulData.result.areas[0].data[0];
+        updateTicker('seoul-auction', seoul.nm, seoul.cv, seoul.cvp);
+
+        // 케이옥션 (102370) 데이터
+        const kAuctionResponse = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:102370');
+        const kData = await kAuctionResponse.json();
+        const kAuction = kData.result.areas[0].data[0];
+        updateTicker('k-auction', kAuction.nm, kAuction.cv, kAuction.cvp);
+
+        // 크리스티는 경매 사이트라 뉴스 기반으로 업데이트 (임시)
+        updateChristiesStatus();
+    } catch (error) {
+        console.log('실시간 데이터 업데이트 실패:', error);
+        // fallback to simulated data
+        updateMarketDataFallback();
+    }
+}
+
+function updateTicker(id, price, changeValue, changePercent) {
+    const card = document.getElementById('card-' + id);
+    if (card) {
+        const valueEl = card.querySelector('.value');
+        const changeEl = card.querySelector('.change');
+        
+        valueEl.textContent = price;
+        changeEl.textContent = (changeValue > 0 ? '▲ ' : '▼ ') + changePercent;
+        changeEl.className = `change ${changeValue > 0 ? 'up' : 'down'}`;
+    }
+}
+
+function updateChristiesStatus() {
+    // 크리스티 뉴스나 상태 업데이트 (API 연동 예정)
+    document.querySelector('#card-christies .value').textContent = 'Auction Live';
+    document.querySelector('#card-christies .change').textContent = 'London/NY Open';
+    document.querySelector('#card-christies .change').className = 'change info';
 }
 
 function updateDailyArt() {
     const randomArt = dailyArts[Math.floor(Math.random() * dailyArts.length)];
     document.getElementById('daily-art-bg').style.backgroundImage = `url('${randomArt.url}')`;
-    document.querySelector('.art-title').innerText = randomArt.title;
-    document.querySelector('.art-artist').innerText = randomArt.artist;
+    document.querySelector('.art-title').textContent = randomArt.title;
+    document.querySelector('.art-artist').textContent = randomArt.artist;
 }
 
 function createNewsletterItems() {
@@ -74,14 +106,32 @@ function createNewsletterItems() {
     });
 }
 
+function updateMarketDataFallback() {
+    // 시뮬레이션 데이터 (API 실패시)
+    const stockData = {
+        kospi: { price: "6,012.45", change: "+2.1%", status: "up" },
+        'seoul-auction': { price: "12,450", change: "+4.2%", status: "up" },
+        'k-auction': { price: "5,120", change: "-1.5%", status: "down" }
+    };
+    
+    Object.keys(stockData).forEach(key => {
+        updateTicker(key, stockData[key].price, stockData[key].change, stockData[key].status);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     createNewsletterItems();
-    updateMarketData();
     updateDailyArt();
+    
+    // 초기 데이터 로드
+    fetchStockData();
+    
+    // 30초마다 실시간 업데이트
+    setInterval(fetchStockData, 30000);
     
     // 시간 업데이트
     setInterval(() => {
         const now = new Date();
-        document.getElementById('current-time').innerText = now.toLocaleString();
+        document.getElementById('current-time').textContent = now.toLocaleString('ko-KR');
     }, 1000);
 });
