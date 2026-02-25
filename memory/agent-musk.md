@@ -8,4 +8,4 @@
     3. 기술적 특이점 및 미래 산업 전망 브리핑
 
 # 사용 방법
-- `sessions_spawn` 호출 시 `agentId="main"`, `model="xai/grok-4.1-fast"` (또는 별칭), `task`에 머스크의 페르소나를 부여하여 실행.
+- `sessions_spawn` 호출 시 `agentId="main"`, `model="xai/grok-4-1-fast-reasoning"`, `task`에 머스크의 페르소나를 부여하여 실행.
