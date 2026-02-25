@@ -54,7 +54,13 @@ async function fetchStockData() {
         const kAuction = kData.result.areas[0].data[0];
         updateTicker('k-auction', kAuction.nm, kAuction.cv, kAuction.cvp);
 
-        // 크리스티는 경매 사이트라 뉴스 기반으로 업데이트 (임시)
+        // 엔비디아 (NVDA, NASDAQ) 데이터
+        const nvdaResponse = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:NAS:NVDA');
+        const nvdaData = await nvdaResponse.json();
+        const nvda = nvdaData.result.areas[0].data[0];
+        updateTicker('nvda', nvda.nm, nvda.cv, nvda.cvp);
+
+        // 크리스티는 비상장 경매 하우스 — 실시간 데이터 없음, 정적 표시
         updateChristiesStatus();
     } catch (error) {
         console.log('실시간 데이터 업데이트 실패:', error);
@@ -76,9 +82,9 @@ function updateTicker(id, price, changeValue, changePercent) {
 }
 
 function updateChristiesStatus() {
-    // 크리스티 뉴스나 상태 업데이트 (API 연동 예정)
-    document.querySelector('#card-christies .value').textContent = 'Auction Live';
-    document.querySelector('#card-christies .change').textContent = 'London/NY Open';
+    // 크리스티는 비상장 경매 하우스로 실시간 API 없음 — 정적 안내 표시
+    document.querySelector('#card-christies .value').textContent = 'Non-Listed';
+    document.querySelector('#card-christies .change').textContent = 'No market data';
     document.querySelector('#card-christies .change').className = 'change info';
 }
 
@@ -108,15 +114,19 @@ function createNewsletterItems() {
 
 function updateMarketDataFallback() {
     // 시뮬레이션 데이터 (API 실패시)
+    // changeValue: 양수=상승(▲), 음수=하락(▼)
     const stockData = {
-        kospi: { price: "6,012.45", change: "+2.1%", status: "up" },
-        'seoul-auction': { price: "12,450", change: "+4.2%", status: "up" },
-        'k-auction': { price: "5,120", change: "-1.5%", status: "down" }
+        kospi: { price: "6,012.45", changeValue: 1, changePercent: "+2.1%" },
+        'seoul-auction': { price: "12,450", changeValue: 1, changePercent: "+4.2%" },
+        'k-auction': { price: "5,120", changeValue: -1, changePercent: "-1.5%" },
+        'nvda': { price: "134.25", changeValue: 1, changePercent: "+1.8%" }
     };
-    
+
     Object.keys(stockData).forEach(key => {
-        updateTicker(key, stockData[key].price, stockData[key].change, stockData[key].status);
+        const d = stockData[key];
+        updateTicker(key, d.price, d.changeValue, d.changePercent);
     });
+    updateChristiesStatus();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
