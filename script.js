@@ -1,3 +1,4 @@
+// ── Newsletter Data ──────────────────────────────────────────────────────────
 const newsletters = [
     {
         title: '[런던] 2025년, 유럽 미술관에서 누굴 만날까 🎊',
@@ -19,129 +20,245 @@ const newsletters = [
     }
 ];
 
-// 오늘의 명화 리스트
+// ── Art of the Day ───────────────────────────────────────────────────────────
 const dailyArts = [
     {
-        url: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=2000",
-        title: "Floral Arrangement",
-        artist: "Jan van Huysum, 1724"
+        url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1400',
+        title: 'Floral Arrangement',
+        artist: 'Jan van Huysum, 1724'
     },
     {
-        url: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=2000",
-        title: "The Birth of Venus",
-        artist: "Sandro Botticelli, 1485"
+        url: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1400',
+        title: 'The Birth of Venus',
+        artist: 'Sandro Botticelli, 1485'
     }
 ];
 
-// 실시간 주식 데이터 업데이트 함수
-async function fetchStockData() {
-    try {
-        // 네이버증권 KOSPI 실시간 데이터 (공개 API)
-        const kospiResponse = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_INDEX:KOSPI');
-        const kospiData = await kospiResponse.json();
-        const kospi = kospiData.result.areas[0].data[0];
-        updateTicker('kospi', kospi.nm, kospi.cv, kospi.cvp);
-
-        // 서울옥션 (063170) 데이터
-        const seoulAuctionResponse = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:063170');
-        const seoulData = await seoulAuctionResponse.json();
-        const seoul = seoulData.result.areas[0].data[0];
-        updateTicker('seoul-auction', seoul.nm, seoul.cv, seoul.cvp);
-
-        // 케이옥션 (102370) 데이터
-        const kAuctionResponse = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:102370');
-        const kData = await kAuctionResponse.json();
-        const kAuction = kData.result.areas[0].data[0];
-        updateTicker('k-auction', kAuction.nm, kAuction.cv, kAuction.cvp);
-
-        // 엔비디아 (NVDA, NASDAQ) 데이터
-        const nvdaResponse = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:NAS:NVDA');
-        const nvdaData = await nvdaResponse.json();
-        const nvda = nvdaData.result.areas[0].data[0];
-        updateTicker('nvda', nvda.nm, nvda.cv, nvda.cvp);
-
-        // 크리스티는 비상장 경매 하우스 — 실시간 데이터 없음, 정적 표시
-        updateChristiesStatus();
-    } catch (error) {
-        console.log('실시간 데이터 업데이트 실패:', error);
-        // fallback to simulated data
-        updateMarketDataFallback();
-    }
-}
-
+// ── Ticker Helpers ───────────────────────────────────────────────────────────
 function updateTicker(id, price, changeValue, changePercent) {
     const card = document.getElementById('card-' + id);
-    if (card) {
-        const valueEl = card.querySelector('.value');
-        const changeEl = card.querySelector('.change');
-        
-        valueEl.textContent = price;
-        changeEl.textContent = (changeValue > 0 ? '▲ ' : '▼ ') + changePercent;
-        changeEl.className = `change ${changeValue > 0 ? 'up' : 'down'}`;
+    if (!card) return;
+
+    const num = Number(changeValue);
+    const isUp   = num > 0;
+    const isDown  = num < 0;
+
+    card.querySelector('.ticker-value').textContent = price;
+
+    const changeEl = card.querySelector('.ticker-change');
+    changeEl.textContent = (isUp ? '▲ ' : isDown ? '▼ ' : '') + changePercent;
+    changeEl.className = 'ticker-change ' +
+        (isUp ? 'ticker-change--up' : isDown ? 'ticker-change--down' : 'ticker-change--neutral');
+}
+
+function setTickerError(id) {
+    const card = document.getElementById('card-' + id);
+    if (!card) return;
+    card.querySelector('.ticker-value').textContent = 'N/A';
+    const el = card.querySelector('.ticker-change');
+    el.textContent = '연결 실패';
+    el.className = 'ticker-change ticker-change--neutral';
+}
+
+// ── Korean Market (Naver Finance Polling API) ────────────────────────────────
+async function fetchKoreanMarket() {
+    const targets = {
+        'kospi':         'https://polling.finance.naver.com/api/realtime?query=SERVICE_INDEX:KOSPI',
+        'kosdaq':        'https://polling.finance.naver.com/api/realtime?query=SERVICE_INDEX:KOSDAQ',
+        'seoul-auction': 'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:063170',
+        'k-auction':     'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:102370',
+    };
+
+    await Promise.allSettled(
+        Object.entries(targets).map(async ([id, url]) => {
+            try {
+                const res  = await fetch(url);
+                const data = await res.json();
+                const item = data.result.areas[0].data[0];
+                // nm = formatted current value, cv = change amount, cvp = change percent
+                updateTicker(id, item.nm, Number(item.cv), item.cvp + '%');
+            } catch {
+                setTickerError(id);
+            }
+        })
+    );
+}
+
+// ── NVDA via Naver Finance ───────────────────────────────────────────────────
+async function fetchNVDA() {
+    try {
+        const res  = await fetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:NAS:NVDA');
+        const data = await res.json();
+        const item = data.result.areas[0].data[0];
+        updateTicker('nvda', item.nm, Number(item.cv), item.cvp + '%');
+    } catch {
+        setTickerError('nvda');
     }
 }
 
-function updateChristiesStatus() {
-    // 크리스티는 비상장 경매 하우스로 실시간 API 없음 — 정적 안내 표시
-    document.querySelector('#card-christies .value').textContent = 'Non-Listed';
-    document.querySelector('#card-christies .change').textContent = 'No market data';
-    document.querySelector('#card-christies .change').className = 'change info';
+// ── US Indices (Yahoo Finance) ───────────────────────────────────────────────
+async function fetchUSIndices() {
+    const symbols = {
+        'sp500':  '%5EGSPC',
+        'nasdaq': '%5EIXIC',
+        'dow':    '%5EDJI',
+    };
+
+    await Promise.allSettled(
+        Object.entries(symbols).map(async ([id, sym]) => {
+            try {
+                const res  = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}?range=1d&interval=1d`);
+                const data = await res.json();
+                const meta = data.chart.result[0].meta;
+                const price    = meta.regularMarketPrice;
+                const prev     = meta.previousClose;
+                const change   = price - prev;
+                const changePct = ((change / prev) * 100).toFixed(2) + '%';
+                updateTicker(id, price.toLocaleString('en-US', { maximumFractionDigits: 2 }), change, changePct);
+            } catch {
+                setTickerError(id);
+            }
+        })
+    );
 }
 
+// ── Bitcoin (CoinGecko public API) ───────────────────────────────────────────
+async function fetchBTC() {
+    try {
+        const res  = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+        const data = await res.json();
+        const price     = data.bitcoin.usd;
+        const changePct = data.bitcoin.usd_24h_change;  // numeric, signed
+        updateTicker(
+            'btc',
+            '$' + price.toLocaleString('en-US'),
+            changePct,
+            changePct.toFixed(2) + '%'
+        );
+    } catch {
+        setTickerError('btc');
+    }
+}
+
+// ── Gold & Silver (metals.live public API) ───────────────────────────────────
+async function fetchMetals() {
+    try {
+        const res  = await fetch('https://api.metals.live/v1/spot');
+        const data = await res.json();
+
+        // metals.live can return either an array [{gold:...},{silver:...}] or a plain object
+        let goldPrice, silverPrice;
+        if (Array.isArray(data)) {
+            goldPrice   = data.find(item => 'gold'   in item)?.gold;
+            silverPrice = data.find(item => 'silver' in item)?.silver;
+        } else {
+            goldPrice   = data.gold;
+            silverPrice = data.silver;
+        }
+
+        if (goldPrice != null) {
+            updateTicker('gold',   '$' + goldPrice.toLocaleString('en-US', { maximumFractionDigits: 2 }), 0, '현물가');
+        } else {
+            setTickerError('gold');
+        }
+
+        if (silverPrice != null) {
+            updateTicker('silver', '$' + silverPrice.toLocaleString('en-US', { maximumFractionDigits: 2 }), 0, '현물가');
+        } else {
+            setTickerError('silver');
+        }
+    } catch {
+        setTickerError('gold');
+        setTickerError('silver');
+    }
+}
+
+// ── Naver Finance News (via RSS → JSON) ─────────────────────────────────────
+async function fetchNaverNews() {
+    const list = document.getElementById('news-list');
+    try {
+        const rssUrl = encodeURIComponent('https://rss.naver.com/finance/index.xml');
+        const res    = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}&count=5`);
+        const data   = await res.json();
+
+        if (!data.items || data.items.length === 0) throw new Error('No items');
+
+        list.innerHTML = '';
+        data.items.slice(0, 5).forEach(item => {
+            const li   = document.createElement('li');
+            li.className = 'news-item';
+            const date = new Date(item.pubDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
+            li.innerHTML = `
+                <a href="${item.link}" target="_blank" rel="noopener">
+                    <span class="news-item-title">${item.title}</span>
+                    <span class="news-item-date">${date}</span>
+                </a>`;
+            list.appendChild(li);
+        });
+    } catch {
+        list.innerHTML = '<li class="news-placeholder">뉴스를 불러올 수 없습니다</li>';
+    }
+}
+
+// ── Orchestrate all market fetches ───────────────────────────────────────────
+async function fetchAllMarketData() {
+    await Promise.allSettled([
+        fetchKoreanMarket(),
+        fetchUSIndices(),
+        fetchNVDA(),
+        fetchBTC(),
+        fetchMetals(),
+    ]);
+}
+
+// ── Art of the Day ───────────────────────────────────────────────────────────
 function updateDailyArt() {
-    const randomArt = dailyArts[Math.floor(Math.random() * dailyArts.length)];
-    document.getElementById('daily-art-bg').style.backgroundImage = `url('${randomArt.url}')`;
-    document.querySelector('.art-title').textContent = randomArt.title;
-    document.querySelector('.art-artist').textContent = randomArt.artist;
+    const art = dailyArts[Math.floor(Math.random() * dailyArts.length)];
+    const img = document.getElementById('art-image');
+    if (img) img.src = art.url;
+    const titleEl = document.querySelector('.art-title');
+    const artistEl = document.querySelector('.art-artist');
+    if (titleEl) titleEl.textContent = art.title;
+    if (artistEl) artistEl.textContent = art.artist;
 }
 
+// ── Newsletter Grid ──────────────────────────────────────────────────────────
 function createNewsletterItems() {
     const grid = document.getElementById('newsletterGrid');
-    if(!grid) return;
-    
-    newsletters.forEach(newsletter => {
+    if (!grid) return;
+
+    newsletters.forEach(n => {
         const item = document.createElement('div');
         item.className = 'newsletter-item';
         item.innerHTML = `
-            <a href="${newsletter.link}" target="_blank" style="text-decoration:none;">
-                <img src="${newsletter.thumbnail}" alt="썸네일 이미지">
-                <h3>${newsletter.title}</h3>
-            </a>
-        `;
+            <a href="${n.link}" target="_blank" rel="noopener" style="text-decoration:none;display:block;">
+                <img src="${n.thumbnail}" alt="썸네일">
+                <h3>${n.title}</h3>
+            </a>`;
         grid.appendChild(item);
     });
 }
 
-function updateMarketDataFallback() {
-    // 시뮬레이션 데이터 (API 실패시)
-    // changeValue: 양수=상승(▲), 음수=하락(▼)
-    const stockData = {
-        kospi: { price: "6,012.45", changeValue: 1, changePercent: "+2.1%" },
-        'seoul-auction': { price: "12,450", changeValue: 1, changePercent: "+4.2%" },
-        'k-auction': { price: "5,120", changeValue: -1, changePercent: "-1.5%" },
-        'nvda': { price: "134.25", changeValue: 1, changePercent: "+1.8%" }
-    };
-
-    Object.keys(stockData).forEach(key => {
-        const d = stockData[key];
-        updateTicker(key, d.price, d.changeValue, d.changePercent);
-    });
-    updateChristiesStatus();
-}
-
+// ── Init ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     createNewsletterItems();
     updateDailyArt();
-    
-    // 초기 데이터 로드
-    fetchStockData();
-    
-    // 30초마다 실시간 업데이트
-    setInterval(fetchStockData, 30000);
-    
-    // 시간 업데이트
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('current-time').textContent = now.toLocaleString('ko-KR');
-    }, 1000);
+
+    // Initial data load
+    fetchAllMarketData();
+    fetchNaverNews();
+
+    // Refresh market data every 30 seconds
+    setInterval(fetchAllMarketData, 30000);
+
+    // Refresh news every 5 minutes
+    setInterval(fetchNaverNews, 5 * 60 * 1000);
+
+    // Clock
+    const updateTime = () => {
+        const el = document.getElementById('current-time');
+        if (el) el.textContent = new Date().toLocaleString('ko-KR');
+    };
+    updateTime();
+    setInterval(updateTime, 1000);
 });
