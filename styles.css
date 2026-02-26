@@ -1,20 +1,24 @@
 /* ============================================================
-   lunadad ArtTech Dashboard — Light Theme
+   lunadad ArtTech Dashboard v4.0 — Neo-Glass Theme
    ============================================================ */
 
 :root {
     --bg:             #f9f7f4;
-    --bg-card:        #ffffff;
-    --bg-muted:       #f3f1ee;
+    --bg-card:        rgba(255, 255, 255, 0.75);
+    --bg-muted:       rgba(243, 241, 238, 0.6);
     --text-primary:   #1a1917;
     --text-secondary: #6b665e;
     --text-muted:     #9c9690;
     --accent:         #c9a96e;
     --accent-dark:    #9a6f38;
-    --border:         #e6e1d9;
+    --gold-start:     #d4af37;
+    --gold-end:       #ffd700;
+    --glow-gold:      rgba(212, 175, 55, 0.3);
+    --border:         transparent;
     --shadow-xs:      0 1px 3px rgba(0,0,0,0.05);
-    --shadow-sm:      0 2px 8px rgba(0,0,0,0.07);
-    --shadow-md:      0 4px 20px rgba(0,0,0,0.10);
+    --shadow-sm:      0 4px 20px rgba(0,0,0,0.08);
+    --shadow-md:      0 25px 50px -12px rgba(0,0,0,0.25);
+    --shadow-glow:    0 0 30px var(--glow-gold);
     --up:             #16a34a;
     --down:           #dc2626;
     --neutral:        #6b7280;
@@ -39,8 +43,8 @@ body {
     width: 100%;
     height: var(--header-height);
     background: rgba(249, 247, 244, 0.94);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
     border-bottom: 1px solid var(--border);
     z-index: 100;
 }
@@ -158,6 +162,31 @@ body {
     50%       { opacity: 0.3; }
 }
 
+/* ── Glass Cards Base ────────────────────────────────────── */
+.ticker-card, .art-card, .newsletter-item, .news-panel {
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid transparent;
+    border-image: linear-gradient(to right, var(--gold-start), var(--gold-end)) 1;
+    border-image-slice: 1;
+}
+
+/* ── Loading Skeleton ────────────────────────────────────── */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    height: 20px;
+    margin: 4px 0;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 /* ── Market Section ──────────────────────────────────────── */
 .market-section { margin-bottom: 56px; }
 
@@ -170,7 +199,7 @@ body {
     text-transform: uppercase;
     color: var(--text-muted);
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(230, 225, 217, 0.5);
     margin-bottom: 14px;
 }
 
@@ -182,23 +211,25 @@ body {
 }
 
 .ticker-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 18px 20px;
     min-width: 150px;
     flex: 1;
     box-shadow: var(--shadow-xs);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     cursor: default;
 }
 
 .ticker-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md), var(--shadow-glow);
 }
 
-.ticker-card--muted { background: var(--bg-muted); }
+.ticker-card--muted { 
+    background: var(--bg-muted); 
+    border-image: none;
+    opacity: 0.7;
+}
 
 .ticker-label {
     font-size: 0.72rem;
@@ -230,11 +261,16 @@ body {
 .art-section { margin-bottom: 56px; }
 
 .art-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+}
+
+.art-card:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md), var(--shadow-glow);
 }
 
 .art-img-wrap {
@@ -255,31 +291,19 @@ body {
 
 .art-caption {
     padding: 20px 24px;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid rgba(230, 225, 217, 0.5);
 }
 
-.art-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    font-style: italic;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-}
-
-.art-artist {
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-}
-
-/* ── News Panel (Right Sidebar) ──────────────────────────── */
+/* ── News Panel ──────────────────────────────────────────── */
 .news-panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 24px;
     box-shadow: var(--shadow-xs);
+    transition: all 0.2s ease;
+}
+
+.news-panel:hover {
+    box-shadow: var(--shadow-md), 0 0 20px var(--glow-gold);
 }
 
 .news-panel-title {
@@ -303,7 +327,7 @@ body {
 .news-list { list-style: none; }
 
 .news-item {
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(230, 225, 217, 0.5);
     padding: 13px 0;
 }
 
@@ -348,17 +372,15 @@ body {
 }
 
 .newsletter-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow-xs);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .newsletter-item:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md), var(--shadow-glow);
 }
 
 .newsletter-item img {
@@ -382,14 +404,16 @@ body {
     padding: 36px;
     font-size: 0.78rem;
     color: var(--text-muted);
-    border-top: 1px solid var(--border);
+    border-top: 1px solid rgba(230, 225, 217, 0.5);
 }
 
-/* ── Responsive ─────────────────────────────────────────── */
+/* ── Enhanced Responsive ─────────────────────────────────── */
 @media (max-width: 1024px) {
     .main-content {
         grid-template-columns: 1fr;
         gap: 32px;
+        padding-left: 24px;
+        padding-right: 24px;
     }
     .main-right { position: static; }
 }
@@ -399,7 +423,22 @@ body {
     .logo-area .title { display: none; }
     .main-content { padding-left: 20px; padding-right: 20px; }
     .art-img-wrap { height: 280px; }
-    .ticker-card { min-width: 130px; padding: 14px 16px; }
+    .ticker-card { 
+        min-width: 130px; 
+        padding: 14px 16px; 
+    }
     .ticker-value { font-size: 1.2rem; }
     .section-title { font-size: 1.4rem; }
+    .ticker-row { gap: 8px; }
+}
+
+@media (max-width: 480px) {
+    .ticker-row { 
+        flex-direction: column;
+        gap: 10px;
+    }
+    .ticker-card { min-width: auto; }
+    .art-img-wrap { height: 240px; }
+    .newsletter-grid { grid-template-columns: 1fr; }
+    .news-panel { padding: 20px; }
 }
