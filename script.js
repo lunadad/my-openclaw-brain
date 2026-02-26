@@ -201,6 +201,19 @@ function createNewsletterItems() {
     });
 }
 
+// ── AI Token Monitor (Simulated for UI) ──────────────────────────────────
+function updateTokenMonitor() {
+    // 실제 API 연동 전까지 시뮬레이션 데이터를 표시합니다.
+    const totalTokens = 125480; // 예시 데이터
+    const estimatedCost = (totalTokens / 1000000 * 0.15).toFixed(4); // Gemini Flash 기준
+    
+    const totalEl = document.getElementById('total-tokens');
+    const costEl = document.getElementById('token-cost');
+    
+    if (totalEl) totalEl.textContent = totalTokens.toLocaleString();
+    if (costEl) costEl.textContent = `$ ${estimatedCost} (Est.)`;
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     createNewsletterItems();
@@ -208,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addSkeleton();
     fetchNaverNews();
     fetchAllMarketData();
+    updateTokenMonitor();
 
     // Art click handler
     document.querySelector('.art-card')?.addEventListener('click', () => {
