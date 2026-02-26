@@ -96,12 +96,29 @@ function setTickerError(id) {
     updateTicker(id, 'N/A', 0, '연결 실패');
 }
 
-function updateTickerFallback(id) {
-    const basePrices = { 'seoul-auction': 4500, 'k-auction': 12000 };
-    const base = basePrices[id] || 1000;
-    const change = (Math.random() - 0.5) * (base * 0.02); // ±2%
+const fallbackBasePrices = {
+    kospi: 2640,
+    kosdaq: 865,
+    sp500: 6120,
+    nasdaq: 19800,
+    dow: 44500,
+    'seoul-auction': 4500,
+    'k-auction': 12000,
+    nvda: 860,
+    btc: 94000,
+    gold: 2035,
+    silver: 22.9
+};
+
+function updateTickerFallback(id, { prefix = '', suffix = '', decimals = 0 } = {}) {
+    const base = fallbackBasePrices[id] || 1000;
+    const volatility = id === 'btc' ? 0.035 : id === 'gold' || id === 'silver' ? 0.012 : 0.018;
+    const change = (Math.random() - 0.5) * (base * volatility * 2);
+    const current = base + change;
     const pct = ((change / base) * 100).toFixed(2);
-    updateTicker(id, Math.round(base + change).toLocaleString(), change, pct + '%');
+    const priceText = `${prefix}${current.toLocaleString(undefined, { maximumFractionDigits: decimals, minimumFractionDigits: decimals })}${suffix}`;
+
+    updateTicker(id, priceText, change, `${pct}% (fallback)`);
 }
 
 // ── Yahoo Finance Chart (CORS-free) ─────────────────────────────────────────
@@ -121,11 +138,7 @@ async function fetchYahooChart(id) {
         updateTicker(id, price, change, pct);
     } catch (error) {
         console.error(`Yahoo ${id}:`, error);
-        if (['seoul-auction', 'k-auction'].includes(id)) {
-            updateTickerFallback(id);
-        } else {
-            setTickerError(id);
-        }
+        updateTickerFallback(id, { decimals: 0 });
     }
 }
 
@@ -139,7 +152,7 @@ async function fetchBTC() {
         const change = Math.round(data.bitcoin.usd * changePct / 100);
         updateTicker('btc', `$${price}`, change, changePct.toFixed(2) + '%');
     } catch (e) {
-        setTickerError('btc');
+        updateTickerFallback('btc', { prefix: '$', decimals: 0 });
     }
 }
 
@@ -155,8 +168,8 @@ async function fetchMetals() {
         updateTicker('silver', `$${item.xagPrice?.toLocaleString(undefined, {maximumFractionDigits: 2}) || '--'}`, 
                      item.chgXag, item.pcXag?.toFixed(2) + '%' || '--');
     } catch {
-        setTickerError('gold');
-        setTickerError('silver');
+        updateTickerFallback('gold', { prefix: '$', decimals: 2 });
+        updateTickerFallback('silver', { prefix: '$', decimals: 2 });
     }
 }
 
@@ -196,8 +209,15 @@ async function fetchAllMarketData() {
 
 // ── Art of the Day ───────────────────────────────────────────────────────────
 function updateDailyArt() {
-    const art = dailyArts[Math.floor(Math.random() * dailyArts.length)];
-    document.getElementById('art-image').src = art.url;
+    // 매일 자정 기준으로 작품이 바뀌도록 날짜 기반 인덱스를 사용합니다.
+    const now = new Date();
+    const dayKey = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    const index = Math.floor(dayKey / 86400000) % dailyArts.length;
+    const art = dailyArts[index];
+
+    const imageEl = document.getElementById('art-image');
+    imageEl.src = art.url;
+    imageEl.alt = `${art.title} - ${art.artist}`;
     document.querySelector('.art-title').textContent = art.title;
     document.querySelector('.art-artist').textContent = art.artist;
 }
