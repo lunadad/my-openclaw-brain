@@ -2,22 +2,22 @@
 // ── Newsletter Data ──────────────────────────────────────────────────────────
 const newsletters = [
     {
-        title: '[런던] 2025년, 유럽 미술관에서 누굴 만날까 🎊',
-        date: '2025. 1. 1.',
-        thumbnail: 'https://img2.stibee.com/115188_2590822_1735663531116824430.jpg',
-        link: 'https://museumexpress.stibee.com/p/19/'
+        title: '[더블린] 유럽에서 만나지 못한 단 한 점의 그림🤦‍♀️',
+        date: '2026. 2. 24.',
+        thumbnail: 'https://img2.stibee.com/115188_3248730_1771912989423939426.jpg',
+        link: 'https://museumexpress.stibee.com/p/76'
     },
     {
-        title: '[런던] 프랜시스 베이컨의 일그러진 초상화 😠',
-        date: '2024. 12. 24.',
-        thumbnail: 'https://img2.stibee.com/115188_2578718_1734967051050782575.jpg',
-        link: 'https://museumexpress.stibee.com/p/18/'
+        title: '[더블린] 오스카 와일드와 샐리 루니의 도시에서👩‍🎓',
+        date: '2026. 2. 10.',
+        thumbnail: 'https://img2.stibee.com/dbca20d4-d32c-4dcc-b8f3-92be21a666b9.png',
+        link: 'https://museumexpress.stibee.com/p/75'
     },
     {
-        title: '[런던] 왕궁에서 만난 다빈치의 드로잉 ✍️',
-        date: '2024. 12. 17.',
-        thumbnail: 'https://img2.stibee.com/115188_2568599_1734447006690231902.jpg',
-        link: 'https://museumexpress.stibee.com/p/17/'
+        title: '[훔레벡] 지상에서 가장 아름다운 미술관을 만났다🪁',
+        date: '2026. 2. 3.',
+        thumbnail: 'https://img2.stibee.com/115188_3218809_1770017987354493464.jpg',
+        link: 'https://museumexpress.stibee.com/p/74'
     }
 ];
 
@@ -32,6 +32,31 @@ const dailyArts = [
         url: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1400',
         title: 'The Birth of Venus',
         artist: 'Sandro Botticelli, 1485'
+    }
+];
+
+
+// ── OpenClaw Art News Briefing (Cron 09:00 KST) ─────────────────────────────
+const artBriefingItems = [
+    {
+        emoji: '🏛️',
+        title: '[루브르의 새로운 시작] Christophe Léribault 임명',
+        summary: '보석 도난 사건으로 혼란을 겪은 루브르에 Christophe Léribault가 신임 관장으로 임명됐습니다. 실추된 명예를 어떻게 회복할지 전 세계가 주목하고 있습니다.'
+    },
+    {
+        emoji: '🗺️',
+        title: "[베니스의 비전] 'In Minor Keys' 작가군 확정",
+        summary: '2026 베니스 비엔날레 전시의 참여 작가 111인이 발표됐습니다. 글로벌 사우스 아티스트의 활약이 특히 돋보이며 역동적인 전시가 예고됩니다.'
+    },
+    {
+        emoji: '🎨',
+        title: '[뉴욕의 거장들] 잭슨 폴락 & 리 크래스너',
+        summary: 'The Met가 10월 폴락과 크래스너를 동등한 예술적 파트너로 조명하는 대규모 공동 전시를 예고했습니다.'
+    },
+    {
+        emoji: '🌴',
+        title: '[LA의 열기] Frieze Los Angeles 개막',
+        summary: "프리즈 LA가 개막했으며 공공 예술 프로그램 'Body & Soul'이 큰 화제를 모으고 있습니다. 도시 전반의 예술 경험 확장이 기대됩니다."
     }
 ];
 
@@ -143,29 +168,22 @@ function addSkeleton() {
     });
 }
 
-// ── Naver Finance News ──────────────────────────────────────────────────────
-async function fetchNaverNews() {
-    const list = document.getElementById('news-list');
-    try {
-        const rssUrl = encodeURIComponent('https://rss.naver.com/finance/index.xml');
-        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}&count=5`);
-        const data = await res.json();
+// ── OpenClaw Art Briefing Render ────────────────────────────────────────────
+function renderArtBriefing(items = artBriefingItems) {
+    const container = document.getElementById('art-briefing-list');
+    if (!container) return;
 
-        list.innerHTML = '';
-        data.items?.slice(0, 5).forEach(item => {
-            const li = document.createElement('li');
-            li.className = 'news-item';
-            const date = new Date(item.pubDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
-            li.innerHTML = `
-                <a href="${item.link}" target="_blank" rel="noopener">
-                    <span class="news-item-title">${item.title}</span>
-                    <span class="news-item-date">${date}</span>
-                </a>`;
-            list.appendChild(li);
-        });
-    } catch {
-        list.innerHTML = '<li class="news-placeholder">뉴스를 불러올 수 없습니다</li>';
-    }
+    container.innerHTML = '';
+    items.forEach((item, index) => {
+        const article = document.createElement('article');
+        article.className = 'briefing-item';
+        article.innerHTML = `
+            <p class="briefing-title"><span class="briefing-emoji">${item.emoji}</span>${item.title}</p>
+            <p class="briefing-summary">${item.summary}</p>
+            <span class="briefing-meta">오늘 오전 브리핑 · ${index + 1}/4</span>
+        `;
+        container.appendChild(article);
+    });
 }
 
 // ── Orchestrate Fetches ──────────────────────────────────────────────────────
@@ -219,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createNewsletterItems();
     updateDailyArt();
     addSkeleton();
-    fetchNaverNews();
+    renderArtBriefing();
     fetchAllMarketData();
     updateTokenMonitor();
 
@@ -235,8 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Real-time updates: 15s
     setInterval(fetchAllMarketData, 15000);
 
-    // News refresh: 5min
-    setInterval(fetchNaverNews, 300000);
 
     // Clock
     const updateTime = () => {
