@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lunadad | ArtTech Dashboard v4.0</title>
+    <title>lunadad | ArtTech Dashboard v5.0</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- Fixed Header -->
     <header class="site-header">
         <div class="header-inner">
             <div class="logo-area">
-                <span class="brand">lunadad</span>
-                <span class="divider">|</span>
-                <span class="title">ArtTech Dashboard</span>
+                <span class="brand">lunadad studio</span>
+                <span class="title-pill">dashboard edition</span>
             </div>
             <nav>
                 <ul class="menu">
                     <li><a href="#market">Market</a></li>
-                    <li><a href="#art">명화</a></li>
+                    <li><a href="#art">Artwork</a></li>
                     <li><a href="#newsletters">Archive</a></li>
                     <li><a href="https://museumexpress.stibee.com/subscribe/" target="_blank" class="nav-subscribe">Subscribe</a></li>
                 </ul>
@@ -28,155 +26,124 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-
-        <!-- Left Column -->
-        <div class="main-left">
-
-            <!-- Market Section -->
-            <section id="market" class="market-section">
-                <div class="section-header">
-                    <div>
-                        <h2 class="section-title">Market Pulse</h2>
-                        <p id="current-time" class="timestamp">--</p>
-                    </div>
-                    <span class="live-badge">● LIVE</span>
-                </div>
-
-                <!-- 한국 지수 -->
-                <div class="market-category">
-                    <h3 class="category-label">한국 지수</h3>
-                    <div class="ticker-row">
-                        <div class="ticker-card" id="card-kospi">
-                            <div class="ticker-label">KOSPI</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                        <div class="ticker-card" id="card-kosdaq">
-                            <div class="ticker-label">KOSDAQ</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 미국 지수 -->
-                <div class="market-category">
-                    <h3 class="category-label">미국 지수</h3>
-                    <div class="ticker-row">
-                        <div class="ticker-card" id="card-sp500">
-                            <div class="ticker-label">S&amp;P 500</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                        <div class="ticker-card" id="card-nasdaq">
-                            <div class="ticker-label">NASDAQ</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                        <div class="ticker-card" id="card-dow">
-                            <div class="ticker-label">다우존스</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 아트테크 & 테크 -->
-                <div class="market-category">
-                    <h3 class="category-label">아트테크 &amp; 테크</h3>
-                    <div class="ticker-row">
-                        <div class="ticker-card" id="card-seoul-auction">
-                            <div class="ticker-label">서울옥션 (063170)</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                        <div class="ticker-card" id="card-k-auction">
-                            <div class="ticker-label">케이옥션 (102370)</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                        <div class="ticker-card" id="card-nvda">
-                            <div class="ticker-label">엔비디아 (NVDA)</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                        <div class="ticker-card ticker-card--muted" id="card-christies">
-                            <div class="ticker-label">Christie's</div>
-                            <div class="ticker-value">비상장</div>
-                            <div class="ticker-change ticker-change--neutral">시장 데이터 없음</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 가상자산 & 원자재 -->
-                <div class="market-category">
-                    <h3 class="category-label">가상자산 &amp; 원자재</h3>
-                    <div class="ticker-row">
-                        <div class="ticker-card" id="card-btc">
-                            <div class="ticker-label">Bitcoin (BTC)</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                        <div class="ticker-card" id="card-gold">
-                            <div class="ticker-label">금 (XAU/oz)</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                        <div class="ticker-card" id="card-silver">
-                            <div class="ticker-label">은 (XAG/oz)</div>
-                            <div class="ticker-value">--</div>
-                            <div class="ticker-change">--</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- AI Insight & Token Monitor (Moved Up & Enhanced) -->
-            <section id="ai-monitor" class="monitor-section">
-                <div class="section-header">
-                    <h2 class="section-title">AI Insight & Token Monitor</h2>
-                    <span class="live-badge">● ANALYZING</span>
-                </div>
-                <div class="monitor-grid">
-                    <div class="monitor-card monitor-card--primary" id="token-usage">
-                        <h3 class="monitor-label">Token Usage (Today)</h3>
-                        <div class="monitor-value" id="total-tokens">--</div>
-                        <div class="monitor-change" id="token-cost">$ --</div>
-                    </div>
-                    <div class="monitor-card" id="ai-status">
-                        <h3 class="monitor-label">System Brain</h3>
-                        <div class="monitor-value" id="current-model">Gemini Flash</div>
-                        <div class="monitor-change ticker-change--up">Efficiency Optimized</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Art of the Day Section -->
-            <section id="art" class="art-section">
-
-            <!-- Newsletter Archive -->
-            <section id="newsletters" class="archive-section">
-                <div class="section-header">
-                    <h2 class="section-title">Newsletter Archive</h2>
-                </div>
-                <div class="newsletter-grid" id="newsletterGrid"></div>
-            </section>
-
-        </div>
-
-        <!-- Right Column: News -->
-        <aside class="main-right">
-            <div class="news-panel">
-                <h2 class="news-panel-title">증권 뉴스</h2>
-                <span class="news-source-label">Naver Finance</span>
-                <ul id="news-list" class="news-list">
-                    <li class="news-placeholder">뉴스를 불러오는 중...</li>
-                </ul>
+    <main class="page-shell">
+        <section class="hero-section">
+            <p class="hero-kicker">ART &amp; MARKET INTELLIGENCE</p>
+            <h1 class="hero-title">Where Insight<br><em>Becomes Momentum.</em></h1>
+            <p class="hero-description">예술 감성과 시장 데이터를 하나의 화면에서 읽는 슬기님 전용 대시보드.</p>
+            <div class="hero-actions">
+                <a href="#market" class="btn btn-primary">Explore Market</a>
+                <a href="#newsletters" class="btn btn-secondary">Read Archive</a>
             </div>
-        </aside>
+            <div class="hero-orbs" aria-hidden="true">
+                <div class="hero-orb hero-orb--left"></div>
+                <div class="hero-orb hero-orb--right"></div>
+            </div>
+        </section>
 
+        <section class="content-grid">
+            <div class="main-left">
+                <section id="market" class="market-section panel-surface">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">Market Pulse</h2>
+                            <p id="current-time" class="timestamp">--</p>
+                        </div>
+                        <span class="live-badge">● LIVE</span>
+                    </div>
+
+                    <div class="market-category">
+                        <h3 class="category-label">한국 지수</h3>
+                        <div class="ticker-row">
+                            <div class="ticker-card" id="card-kospi"><div class="ticker-label">KOSPI</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                            <div class="ticker-card" id="card-kosdaq"><div class="ticker-label">KOSDAQ</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                        </div>
+                    </div>
+
+                    <div class="market-category">
+                        <h3 class="category-label">미국 지수</h3>
+                        <div class="ticker-row">
+                            <div class="ticker-card" id="card-sp500"><div class="ticker-label">S&amp;P 500</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                            <div class="ticker-card" id="card-nasdaq"><div class="ticker-label">NASDAQ</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                            <div class="ticker-card" id="card-dow"><div class="ticker-label">다우존스</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                        </div>
+                    </div>
+
+                    <div class="market-category">
+                        <h3 class="category-label">아트테크 &amp; 테크</h3>
+                        <div class="ticker-row">
+                            <div class="ticker-card" id="card-seoul-auction"><div class="ticker-label">서울옥션 (063170)</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                            <div class="ticker-card" id="card-k-auction"><div class="ticker-label">케이옥션 (102370)</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                            <div class="ticker-card" id="card-nvda"><div class="ticker-label">엔비디아 (NVDA)</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                            <div class="ticker-card ticker-card--muted" id="card-christies"><div class="ticker-label">Christie's</div><div class="ticker-value">비상장</div><div class="ticker-change ticker-change--neutral">시장 데이터 없음</div></div>
+                        </div>
+                    </div>
+
+                    <div class="market-category">
+                        <h3 class="category-label">가상자산 &amp; 원자재</h3>
+                        <div class="ticker-row">
+                            <div class="ticker-card" id="card-btc"><div class="ticker-label">Bitcoin (BTC)</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                            <div class="ticker-card" id="card-gold"><div class="ticker-label">금 (XAU/oz)</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                            <div class="ticker-card" id="card-silver"><div class="ticker-label">은 (XAG/oz)</div><div class="ticker-value">--</div><div class="ticker-change">--</div></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="ai-monitor" class="monitor-section panel-surface">
+                    <div class="section-header">
+                        <h2 class="section-title">AI Insight &amp; Token Monitor</h2>
+                        <span class="live-badge">● ANALYZING</span>
+                    </div>
+                    <div class="monitor-grid">
+                        <div class="monitor-card monitor-card--primary" id="token-usage">
+                            <h3 class="monitor-label">Token Usage (Today)</h3>
+                            <div class="monitor-value" id="total-tokens">--</div>
+                            <div class="monitor-change" id="token-cost">$ --</div>
+                        </div>
+                        <div class="monitor-card" id="ai-status">
+                            <h3 class="monitor-label">System Brain</h3>
+                            <div class="monitor-value" id="current-model">Gemini Flash</div>
+                            <div class="monitor-change ticker-change--up">Efficiency Optimized</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="art" class="art-section panel-surface">
+                    <div class="section-header">
+                        <h2 class="section-title">Art of the Day</h2>
+                    </div>
+                    <article class="art-card">
+                        <div class="art-img-wrap">
+                            <img id="art-image" class="art-img" src="" alt="오늘의 명화">
+                        </div>
+                        <div class="art-caption">
+                            <h3 class="art-title">--</h3>
+                            <p class="art-artist">--</p>
+                        </div>
+                    </article>
+                </section>
+
+                <section id="newsletters" class="archive-section panel-surface">
+                    <div class="section-header">
+                        <h2 class="section-title">Newsletter Archive</h2>
+                    </div>
+                    <div class="newsletter-grid" id="newsletterGrid"></div>
+                </section>
+            </div>
+
+            <aside class="main-right">
+                <div class="news-panel art-news-panel">
+                    <div class="art-news-head">
+                        <h2 class="news-panel-title">아트 뉴스 브리핑</h2>
+                        <span class="briefing-badge">OpenClaw Cron · 09:00 KST</span>
+                    </div>
+                    <span class="news-source-label">Today's Art Briefing</span>
+                    <div id="art-briefing-list" class="art-briefing-list">
+                        <p class="news-placeholder">브리핑을 불러오는 중...</p>
+                    </div>
+                </div>
+            </aside>
+        </section>
     </main>
 
     <footer class="site-footer">
