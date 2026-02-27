@@ -182,22 +182,33 @@ function addSkeleton() {
 }
 
 // ── OpenClaw Art Briefing Render ────────────────────────────────────────────
-function renderArtBriefing(items = artBriefingItems) {
+async function renderArtBriefing() {
     const container = document.getElementById('art-briefing-list');
     if (!container) return;
 
-    container.innerHTML = '';
-    items.forEach((item, index) => {
-        const article = document.createElement('article');
-        article.className = 'briefing-item';
-        article.innerHTML = `
-            <p class="briefing-title"><span class="briefing-emoji">${item.emoji}</span>${item.title}</p>
-            <p class="briefing-summary">${item.summary}</p>
-            <span class="briefing-meta">오늘 오전 브리핑 · ${index + 1}/4</span>
-        `;
-        container.appendChild(article);
-    });
+    try {
+        const response = await fetch(`art-news.json?t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('fetch error');
+        const data = await response.json();
+        const items = data.items || [];
+        
+        container.innerHTML = '';
+        items.forEach((item, index) => {
+            const article = document.createElement('article');
+            article.className = 'briefing-item';
+            article.innerHTML = `
+                <p class="briefing-title"><span class="briefing-emoji">${item.emoji || '✨'}</span>${item.title}</p>
+                <p class="briefing-summary">${item.summary}</p>
+                <span class="briefing-meta">오늘 오전 브리핑 · ${index + 1}/${items.length}</span>
+            `;
+            container.appendChild(article);
+        });
+    } catch (e) {
+        container.innerHTML = '<p class="news-placeholder">오늘의 브리핑을 불러오지 못했습니다.</p>';
+        console.error('Art briefing error:', e);
+    }
 }
+
 
 // ── Orchestrate Fetches ──────────────────────────────────────────────────────
 async function fetchAllMarketData() {
@@ -258,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDailyArt();
     addSkeleton();
     renderArtBriefing();
+    fetchArtBriefing();
     fetchAllMarketData();
     updateTokenMonitor();
 
@@ -281,3 +293,29 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 });
+
+// ── Karina's Art Briefing ────────────────────────────────────────────────────
+async function fetchArtBriefing() {
+    const grid = document.getElementById('briefingGrid');
+    if (!grid) return;
+
+    try {
+        const response = await fetch(`art-news.json?t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Network error');
+        const data = await response.json();
+        
+        grid.innerHTML = '';
+        data.items.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'briefing-card';
+            el.innerHTML = `
+                <h4 class="art-briefing-title" style="margin-bottom:8px; font-weight:600;">${item.title}</h4>
+                <p class="art-briefing-summary" style="font-size:0.85rem; color:var(--text-secondary);">${item.summary}</p>
+            `;
+            grid.appendChild(el);
+        });
+    } catch (error) {
+        console.error('Failed to fetch art briefing:', error);
+        grid.innerHTML = '<p class="news-placeholder">브리핑 데이터를 불러오지 못했습니다.</p>';
+    }
+}
