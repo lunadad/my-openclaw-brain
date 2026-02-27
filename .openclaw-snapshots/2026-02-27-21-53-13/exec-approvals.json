@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "socket": {
+    "path": "/Users/haluna/.openclaw/exec-approvals.sock",
+    "token": "d2m2FtPzXabNfDDrFHtvliYpR-_GBQE5"
+  },
+  "defaults": {},
+  "agents": {}
+}

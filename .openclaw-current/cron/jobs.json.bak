@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "39020c9f-8cfb-4524-97a0-29e6c485ea47",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "슬기님의 아침 복약 확인 및 데일리 브리핑",
+      "enabled": true,
+      "createdAtMs": 1771588368031,
+      "updatedAtMs": 1772146882234,
+      "schedule": {
+        "expr": "0 8 * * *",
+        "tz": "Asia/Seoul",
+        "kind": "cron"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "message": "슬기님, 좋은 아침입니다! 🎨📈 오전 8시입니다. 오늘 아침 약은 챙겨 드셨나요? 💊 \n\n오늘의 서울 날씨, 구글 캘린더에서 확인한 슬기님의 오늘 전체 일정, 보유하신 Amazon(AMZN) 및 Intel(INTC) 관련 심야 주가 및 최신 소식(AI 인프라 투자 및 파트너십 등), 그리고 간밤의 미국 증시 주요 뉴스를 정리해서 브리핑해 드릴게요. (날씨, 캘린더, 뉴스 도구를 사용해서 최신 정보를 확인한 후 보고해줘)",
+        "kind": "agentTurn",
+        "model": "google/gemini-3-flash-preview"
+      },
+      "delivery": {
+        "mode": "announce"
+      },
+      "state": {
+        "nextRunAtMs": 1772233200000,
+        "lastRunAtMs": 1772146800013,
+        "lastStatus": "ok",
+        "lastDurationMs": 82221,
+        "consecutiveErrors": 0,
+        "lastRunStatus": "ok",
+        "lastDelivered": true,
+        "lastDeliveryStatus": "delivered"
+      }
+    },
+    {
+      "id": "karina-morning-art-briefing",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "카리나의 오전 9시 아트 브리핑",
+      "enabled": true,
+      "createdAtMs": 1772065200000,
+      "updatedAtMs": 1772150446430,
+      "schedule": {
+        "expr": "0 9 * * *",
+        "tz": "Asia/Seoul",
+        "kind": "cron"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "message": "너는 카리나(Karina)야. 슬기님의 세련된 비서로서, 오늘 아침의 주요 아트뉴스를 4가지 핵심 소식으로 요약해. 그 다음 직접 write 툴을 사용해 /Users/haluna/.openclaw/workspace/art-news.json 파일을 덮어쓰고, exec 툴로 git add . && git commit -m 'feat: Dashboard v4.5 - Automate Karina Art Briefing' && git push origin main을 실행해 대시보드에 배포해. ✨🎨🌙",
+        "kind": "agentTurn",
+        "model": "google/gemini-3.1-pro-preview"
+      },
+      "delivery": {
+        "mode": "announce"
+      },
+      "state": {
+        "nextRunAtMs": 1772236800000,
+        "lastRunStatus": "ok",
+        "lastRunAtMs": 1772150400011,
+        "lastStatus": "ok",
+        "lastDurationMs": 46419,
+        "lastDelivered": true,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "musk-tsla-daily-report-2026",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "머스크의 테슬라 특별 보고서 발송",
+      "enabled": true,
+      "createdAtMs": 1771931160000,
+      "updatedAtMs": 1772143312602,
+      "schedule": {
+        "expr": "0 7 * * *",
+        "tz": "Asia/Seoul",
+        "kind": "cron"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "message": "너는 '머스크(Musk)' 에이전트야. 테슬라(TSLA) 주가 및 시장 동향을 혁신적이고 직설적인 스타일로 분석해줘. 분석이 끝나면 그 결과를 gog를 사용해 miksnah@gmail.com으로 이메일을 보내. 제목은 '[Musk Daily] 테슬라 전략 브리핑'이야. 마지막에 '화성 갈 거니까! 🚀' 잊지 말고.",
+        "kind": "agentTurn",
+        "model": "google/gemini-3-flash-preview"
+      },
+      "delivery": {
+        "mode": "announce"
+      },
+      "state": {
+        "nextRunAtMs": 1772229600000,
+        "lastRunStatus": "error",
+        "lastRunAtMs": 1772143200010,
+        "lastStatus": "error",
+        "lastDurationMs": 112592,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 1,
+        "lastError": "cron announce delivery failed"
+      }
+    },
+    {
+      "id": "weekly-medication-report",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "주간 복약 리포트 정리",
+      "enabled": true,
+      "createdAtMs": 1771987500000,
+      "updatedAtMs": 1771987500000,
+      "schedule": {
+        "expr": "0 8 * * 0",
+        "tz": "Asia/Seoul",
+        "kind": "cron"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "message": "카리나야, 'memory/medication-log.md' 파일을 읽어서 지난 일주일 동안 슬기님이 약을 언제 드셨는지 표로 깔끔하게 정리해줘. 만약 빠진 날이 있다면 다정하게 건강 챙기라고 말해주고, 잘 챙겨 드셨다면 칭찬해 드려! ✨💊",
+        "kind": "agentTurn",
+        "model": "google/gemini-3-flash-preview"
+      },
+      "delivery": {
+        "mode": "announce"
+      },
+      "state": {
+        "nextRunAtMs": 1772319600000,
+        "lastRunStatus": "ok"
+      }
+    }
+  ]
+}
