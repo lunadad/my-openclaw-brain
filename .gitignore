@@ -1,2 +1,21 @@
+# OpenClaw Backup Ignore
+.openclaw-snapshots/**/.env
+.openclaw-snapshots/**/credentials/
+.openclaw-snapshots/**/auth.json
+.openclaw-snapshots/**/auth-profiles.json
+.openclaw-snapshots/**/openclaw.json
+.openclaw-snapshots/**/media/inbound/
+.openclaw-snapshots/**/logs/
+
+.openclaw-current/.env
+.openclaw-current/credentials/
+.openclaw-current/auth.json
+.openclaw-current/auth-profiles.json
+.openclaw-current/openclaw.json
+.openclaw-current/media/inbound/
+.openclaw-current/logs/
+
+# General ignores
+.DS_Store
 *.log
-secrets.json
+node_modules/
