@@ -60,27 +60,40 @@ function setTickerError(id) {
     el.className = 'ticker-change ticker-change--neutral';
 }
 
-// ── CORS Proxy (browser→외부 API 차단 우회) ──────────────────────────────────
-const proxyFetch = (url) =>
-    fetch('https://corsproxy.io/?url=' + encodeURIComponent(url));
+// ── Yahoo Finance Helper ──────────────────────────────────────────────────────
+async function fetchYahooMeta(symbol) {
+    const res = await fetch(
+        `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1d`
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.chart.result[0].meta;
+}
 
-// ── Korean Market (corsproxy → Naver Finance Polling API) ────────────────────
+function calcChange(meta) {
+    const price = meta.regularMarketPrice;
+    // 응답 버전에 따라 필드명이 다름 (previousClose / chartPreviousClose)
+    const prev  = meta.previousClose ?? meta.chartPreviousClose;
+    const change    = price - prev;
+    const changePct = ((change / prev) * 100).toFixed(2) + '%';
+    return { price, change, changePct };
+}
+
+// ── Korean Market (Yahoo Finance: ^KS11, ^KQ11, KS/KQ 종목) ─────────────────
 async function fetchKoreanMarket() {
     const targets = {
-        'kospi':         'https://polling.finance.naver.com/api/realtime?query=SERVICE_INDEX:KOSPI',
-        'kosdaq':        'https://polling.finance.naver.com/api/realtime?query=SERVICE_INDEX:KOSDAQ',
-        'seoul-auction': 'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:063170',
-        'k-auction':     'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:102370',
+        'kospi':         '^KS11',
+        'kosdaq':        '^KQ11',
+        'seoul-auction': '063170.KS',
+        'k-auction':     '102370.KQ',
     };
 
     await Promise.allSettled(
-        Object.entries(targets).map(async ([id, url]) => {
+        Object.entries(targets).map(async ([id, symbol]) => {
             try {
-                const res  = await proxyFetch(url);
-                const data = await res.json();
-                const item = data.result.areas[0].data[0];
-                // nm = formatted current value, cv = change amount, cvp = change percent
-                updateTicker(id, item.nm, Number(item.cv), item.cvp + '%');
+                const meta = await fetchYahooMeta(symbol);
+                const { price, change, changePct } = calcChange(meta);
+                updateTicker(id, price.toLocaleString('ko-KR', { maximumFractionDigits: 2 }), change, changePct);
             } catch {
                 setTickerError(id);
             }
@@ -88,36 +101,30 @@ async function fetchKoreanMarket() {
     );
 }
 
-// ── NVDA (corsproxy → Naver Finance) ─────────────────────────────────────────
+// ── NVDA (Yahoo Finance) ──────────────────────────────────────────────────────
 async function fetchNVDA() {
     try {
-        const res  = await proxyFetch('https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:NAS:NVDA');
-        const data = await res.json();
-        const item = data.result.areas[0].data[0];
-        updateTicker('nvda', item.nm, Number(item.cv), item.cvp + '%');
+        const meta = await fetchYahooMeta('NVDA');
+        const { price, change, changePct } = calcChange(meta);
+        updateTicker('nvda', price.toLocaleString('en-US', { maximumFractionDigits: 2 }), change, changePct);
     } catch {
         setTickerError('nvda');
     }
 }
 
-// ── US Indices (corsproxy → Yahoo Finance) ───────────────────────────────────
+// ── US Indices (Yahoo Finance) ────────────────────────────────────────────────
 async function fetchUSIndices() {
     const symbols = {
-        'sp500':  '%5EGSPC',
-        'nasdaq': '%5EIXIC',
-        'dow':    '%5EDJI',
+        'sp500':  '^GSPC',
+        'nasdaq': '^IXIC',
+        'dow':    '^DJI',
     };
 
     await Promise.allSettled(
-        Object.entries(symbols).map(async ([id, sym]) => {
+        Object.entries(symbols).map(async ([id, symbol]) => {
             try {
-                const res  = await proxyFetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}?range=1d&interval=1d`);
-                const data = await res.json();
-                const meta = data.chart.result[0].meta;
-                const price    = meta.regularMarketPrice;
-                const prev     = meta.previousClose;
-                const change   = price - prev;
-                const changePct = ((change / prev) * 100).toFixed(2) + '%';
+                const meta = await fetchYahooMeta(symbol);
+                const { price, change, changePct } = calcChange(meta);
                 updateTicker(id, price.toLocaleString('en-US', { maximumFractionDigits: 2 }), change, changePct);
             } catch {
                 setTickerError(id);
