@@ -121,13 +121,15 @@ function updateTickerFallback(id, { prefix = '', suffix = '', decimals = 0 } = {
     updateTicker(id, priceText, change, `${pct}% (fallback)`);
 }
 
-// ── Yahoo Finance Chart (CORS-free) ─────────────────────────────────────────
+// ── Yahoo Finance Chart (CORS-free via Proxy) ───────────────────────────────
 async function fetchYahooChart(id) {
     const symbol = symbols[id];
     if (!symbol) return;
 
     try {
-        const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=2d&interval=1d`);
+        const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=2d&interval=1d`);
+        const response = await fetch(`https://api.allorigins.win/raw?url=${targetUrl}`);
+        if (!response.ok) throw new Error('API Error');
         const data = await response.json();
         if (!data.chart?.result?.[0]) throw new Error('No data');
 
@@ -145,7 +147,9 @@ async function fetchYahooChart(id) {
 // ── Bitcoin ──────────────────────────────────────────────────────────────────
 async function fetchBTC() {
     try {
-        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+        const targetUrl = encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+        const res = await fetch(`https://api.allorigins.win/raw?url=${targetUrl}`);
+        if (!res.ok) throw new Error('API Error');
         const data = await res.json();
         const price = data.bitcoin.usd.toLocaleString();
         const changePct = data.bitcoin.usd_24h_change;
@@ -159,7 +163,9 @@ async function fetchBTC() {
 // ── Gold & Silver ───────────────────────────────────────────────────────────
 async function fetchMetals() {
     try {
-        const res = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
+        const targetUrl = encodeURIComponent('https://data-asg.goldprice.org/dbXRates/USD');
+        const res = await fetch(`https://api.allorigins.win/raw?url=${targetUrl}`);
+        if (!res.ok) throw new Error('API Error');
         const data = await res.json();
         const item = data.items[0];
 
@@ -252,8 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Real-time updates: 15s
-    setInterval(fetchAllMarketData, 15000);
+    // Real-time updates: 60s (To avoid API Rate Limits)
+    setInterval(fetchAllMarketData, 60000);
 
 
     // Clock
