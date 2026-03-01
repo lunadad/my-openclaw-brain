@@ -54,7 +54,7 @@ const dailyArts = [
         artist: 'Edvard Munch, 1893'
     },
     {
-        url: 'https://uploads5.wikiart.org/images/gustav-klimt/the-kiss-1908.jpg!Large.jpg',
+        url: 'https://www.wikiart.org/img/large-scale/1/1/6/1161116-klimt-gustav-the-kiss-1908.jpg',
         title: 'The Kiss',
         artist: 'Gustav Klimt, 1908'
     },
