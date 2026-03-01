@@ -268,16 +268,27 @@ function createNewsletterItems() {
 }
 
 // ── AI Token Monitor (Simulated for UI) ──────────────────────────────────
-function updateTokenMonitor() {
-    // 실제 API 연동 전까지 시뮬레이션 데이터를 표시합니다.
-    const totalTokens = 125480; // 예시 데이터
-    const estimatedCost = (totalTokens / 1000000 * 0.15).toFixed(4); // Gemini Flash 기준
-    
-    const totalEl = document.getElementById('total-tokens');
-    const costEl = document.getElementById('token-cost');
-    
-    if (totalEl) totalEl.textContent = totalTokens.toLocaleString();
-    if (costEl) costEl.textContent = `$ ${estimatedCost} (Est.)`;
+async function updateTokenMonitor() {
+    try {
+        const response = await fetch('http://127.0.0.1:18789/status?json');
+        if (!response.ok) throw new Error('API Error');
+        const data = await response.json();
+        const totalTokens = data.tokensIn || 0 + data.tokensOut || 0;
+        const cost = data.cost || 0;
+        
+        const totalEl = document.getElementById('total-tokens');
+        const costEl = document.getElementById('token-cost');
+        
+        if (totalEl) totalEl.textContent = totalTokens.toLocaleString();
+        if (costEl) costEl.textContent = `$${cost.toFixed(4)}`;
+    } catch (error) {
+        console.error('Token API:', error);
+        // Fallback
+        const totalTokens = 125480;
+        const estimatedCost = (totalTokens / 1000000 * 0.15).toFixed(4);
+        document.getElementById('total-tokens').textContent = totalTokens.toLocaleString();
+        document.getElementById('token-cost').textContent = `$ ${estimatedCost} (Est.)`;
+    }
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
