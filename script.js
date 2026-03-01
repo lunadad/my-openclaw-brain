@@ -24,29 +24,54 @@ const newsletters = [
 // ── Art of the Day ───────────────────────────────────────────────────────────
 const dailyArts = [
     {
-        url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1400',
-        title: 'Floral Arrangement',
-        artist: 'Jan van Huysum, 1724'
+        url: 'https://uploads0.wikiart.org/images/vincent-van-gogh/starry-night-1889-google-art-project.jpg!Large.jpg',
+        title: 'The Starry Night',
+        artist: 'Vincent van Gogh, 1889'
     },
     {
-        url: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1400',
-        title: 'The Birth of Venus',
-        artist: 'Sandro Botticelli, 1485'
+        url: 'https://uploads3.wikiart.org/images/guillaume-seignac/psych%25C3%25A9-delicieux.jpg!Large.jpg',
+        title: 'Psyche Delicious',
+        artist: 'Guillaume Seignac, 1900'
     },
     {
-        url: 'https://images.unsplash.com/photo-1549497538-f0d6a3a5e68d?q=80&w=1400',
-        title: 'Starry Night Over Rhone',
-        artist: 'Vincent van Gogh, 1888'
+        url: 'https://uploads6.wikiart.org/images/leonardo-da-vinci/mona-lisa-1503-1506.jpg!Large.jpg',
+        title: 'Mona Lisa',
+        artist: 'Leonardo da Vinci, 1503-1506'
     },
     {
-        url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1400',
+        url: 'https://uploads4.wikiart.org/images/claude-monet/impression-sunrise-1872.jpg!Large.jpg',
+        title: 'Impression, Sunrise',
+        artist: 'Claude Monet, 1872'
+    },
+    {
+        url: 'https://uploads0.wikiart.org/images/pablo-picasso/guernica.jpg!Large.jpg',
+        title: 'Guernica',
+        artist: 'Pablo Picasso, 1937'
+    },
+    {
+        url: 'https://uploads7.wikiart.org/images/edvard-munch/the-scream-1893.jpg!Large.jpg',
+        title: 'The Scream',
+        artist: 'Edvard Munch, 1893'
+    },
+    {
+        url: 'https://uploads5.wikiart.org/images/gustav-klimt/the-kiss-1908.jpg!Large.jpg',
         title: 'The Kiss',
         artist: 'Gustav Klimt, 1908'
     },
     {
-        url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=1400',
+        url: 'https://uploads8.wikiart.org/images/johannes-vermeer/girl-with-a-pearl-earring-c-1665.jpg!Large.jpg',
         title: 'Girl with a Pearl Earring',
-        artist: 'Johannes Vermeer, 1665'
+        artist: 'Johannes Vermeer, c.1665'
+    },
+    {
+        url: 'https://uploads1.wikiart.org/images/sandro-botticelli/the-birth-of-venus-1485.jpg!Large.jpg',
+        title: 'The Birth of Venus',
+        artist: 'Sandro Botticelli, 1485'
+    },
+    {
+        url: 'https://uploads2.wikiart.org/images/michelangelo-buonarroti/the-creation-of-adam-1510.jpg!Large.jpg',
+        title: 'The Creation of Adam',
+        artist: 'Michelangelo, 1510'
     }
 ];
 
