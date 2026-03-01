@@ -32,6 +32,21 @@ const dailyArts = [
         url: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1400',
         title: 'The Birth of Venus',
         artist: 'Sandro Botticelli, 1485'
+    },
+    {
+        url: 'https://images.unsplash.com/photo-1549497538-f0d6a3a5e68d?q=80&w=1400',
+        title: 'Starry Night Over Rhone',
+        artist: 'Vincent van Gogh, 1888'
+    },
+    {
+        url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1400',
+        title: 'The Kiss',
+        artist: 'Gustav Klimt, 1908'
+    },
+    {
+        url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=1400',
+        title: 'Girl with a Pearl Earring',
+        artist: 'Johannes Vermeer, 1665'
     }
 ];
 
